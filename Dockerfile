@@ -9,5 +9,6 @@ COPY --from=portage /usr/portage /usr/portage
 
 RUN emerge --sync \
     && emerge -vuDN @world \
+    && emerge --depclean \
     && emerge --info \
     && (cd /var/db/pkg/ && ls -d */*)
