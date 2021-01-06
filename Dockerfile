@@ -8,7 +8,7 @@ FROM gentoo/stage3:latest
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
 RUN emerge --sync \
-    && emerge -vuDN @world \
+    && FEATURES="-sandbox -usersandbox" emerge -vuDN @world \
     && emerge --depclean \
     && emerge --info \
     && (cd /var/db/pkg/ && ls -d */*)
