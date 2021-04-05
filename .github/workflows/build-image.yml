@@ -7,7 +7,7 @@ env:
   ORG: ${{ secrets.DOCKERHUB_USERNAME }}
     
 jobs:
-  build:
+  build-image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
