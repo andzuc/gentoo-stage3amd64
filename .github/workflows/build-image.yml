@@ -28,7 +28,7 @@ jobs:
           echo 'EOF' >>$GITHUB_ENV
       - name: Available image platforms
         run: |
-          echo "${{fromJson(env.manifest).*.Descriptor.platform}}"
+          echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
