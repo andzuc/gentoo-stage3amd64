@@ -32,6 +32,7 @@ jobs:
         with:
           script: |
             const manifestList=process.env.manifest
+            console.log('manigestList is of type: '+(typeof manifestList))
             const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
             console.log(`And the manifest is: ${platformList}`)
       - name: Available image platforms
