@@ -32,7 +32,8 @@ jobs:
         with:
           script: |
             const manifest=process.env.manifest
-            console.log(`And the manifest is: ${manifest}`)
+            const platforms=manifest.*.Descriptor.platform
+            console.log(`And the manifest is: ${platforms}`)
       - name: Available image platforms
         run: |
           echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
