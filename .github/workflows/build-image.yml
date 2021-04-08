@@ -26,6 +26,13 @@ jobs:
           echo 'manifest<<EOF' >>$GITHUB_ENV
           echo "$(docker manifest inspect -v ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage3)" >>$GITHUB_ENV
           echo 'EOF' >>$GITHUB_ENV
+      - name: Eval platforms from manifest
+        uses: actions/github-script@v3
+        id: eval-platforms
+        with:
+          script: |
+            const manifest=process.env.manifest
+            console.log('And the manifest is: ${manifest}')
       - name: Available image platforms
         run: |
           echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
