@@ -31,9 +31,9 @@ jobs:
         id: eval-platforms
         with:
           script: |
-            const manifest=process.env.manifest
-            const platforms=manifest.*.Descriptor.platform
-            console.log(`And the manifest is: ${platforms}`)
+            const manifestList=process.env.manifest
+            const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
+            console.log(`And the manifest is: ${platformList}`)
       - name: Available image platforms
         run: |
           echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
