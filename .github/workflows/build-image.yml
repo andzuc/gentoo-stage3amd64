@@ -21,9 +21,11 @@ jobs:
         run: echo ${{ steps.buildx.outputs.name }}
       - name: Available buildx platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Inspect manifest image
+        env:
+          manifest: $(docker manifest inspect -v ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage3)
       - name: Available image platforms
         run: |
-          echo "manifest=$(docker manifest inspect -v ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage3)" >>GITHUB_ENV
           echo "${{env.manifest}}"
 #         echo "${{fromJson(env.manifest).*.Descriptor.platform}}"
       - name: Login to DockerHub
