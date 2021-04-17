@@ -32,9 +32,9 @@ jobs:
         with:
           script: |
             const manifestList=JSON.parse(process.env.manifest)
-            console.log('manigestList is of type: '+(typeof manifestList))
+            console.log('manifestList is of type: '+(typeof manifestList))
             const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
-            const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?platform.variant:''}`))
+            const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?('/'+platform.variant):''}`))
             console.log(`And the manifest is: ${platformStrList}`)
       - name: Available image platforms
         run: |
