@@ -36,7 +36,7 @@ jobs:
             const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
             const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?('/'+platform.variant):''}`))
             console.log(`And the manifest is: ${platformStrList}`)
-            return platformStrList
+            return `${platformStrList}`
       - name: Available image platforms
         run: |
           echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
