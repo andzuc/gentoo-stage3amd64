@@ -36,6 +36,7 @@ jobs:
             const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
             const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?('/'+platform.variant):''}`))
             console.log(`And the manifest is: ${platformStrList}`)
+            return platformStrList
       - name: Available image platforms
         run: |
           echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
@@ -49,5 +50,5 @@ jobs:
         with:
           context: context
           push: true
-          platforms: ${{ steps.buildx.outputs.platforms }}
+          platforms: ${{ steps.eval-platforms.outputs.result }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage4
