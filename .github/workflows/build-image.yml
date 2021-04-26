@@ -7,9 +7,37 @@ env:
   ORG: ${{ secrets.DOCKERHUB_USERNAME }}
     
 jobs:
+  detect-platforms:
+    runs-on: ubuntu-latest
+    outputs:
+      platforms: ${{ steps.eval-platforms.outputs.result }}
+    steps:
+      - name: Inspect manifest image
+        run: |
+          echo 'manifest<<EOF' >>$GITHUB_ENV
+          echo "$(docker manifest inspect -v ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage3)" >>$GITHUB_ENV
+          echo 'EOF' >>$GITHUB_ENV
+      - name: Available image platforms
+        run: |
+          echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
+      - name: Eval platforms from manifest
+        uses: actions/github-script@v3
+        id: eval-platforms
+        with:
+          script: |
+            const manifestList=JSON.parse(process.env.manifest)
+            console.log('manifestList is of type: '+(typeof manifestList))
+            const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
+            const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?('/'+platform.variant):''}`))
+            console.log(`And the manifest is: ${platformStrList}`)
+            return `${platformStrList}`
   build-image:
     runs-on: ubuntu-latest
     timeout-minutes: 1200
+    needs: detect-platforms
+    strategy:
+      matrix:
+        platform: ${{ needs.detect-platforms.outputs.platforms }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,25 +50,6 @@ jobs:
         run: echo ${{ steps.buildx.outputs.name }}
       - name: Available buildx platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
-      - name: Inspect manifest image
-        run: |
-          echo 'manifest<<EOF' >>$GITHUB_ENV
-          echo "$(docker manifest inspect -v ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage3)" >>$GITHUB_ENV
-          echo 'EOF' >>$GITHUB_ENV
-      - name: Eval platforms from manifest
-        uses: actions/github-script@v3
-        id: eval-platforms
-        with:
-          script: |
-            const manifestList=JSON.parse(process.env.manifest)
-            console.log('manifestList is of type: '+(typeof manifestList))
-            const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
-            const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?('/'+platform.variant):''}`))
-            console.log(`And the manifest is: ${platformStrList}`)
-            return `${platformStrList}`
-      - name: Available image platforms
-        run: |
-          echo "${{toJSON(fromJSON(env.manifest).*.Descriptor.platform)}}"
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
@@ -51,5 +60,5 @@ jobs:
         with:
           context: context
           push: true
-          platforms: ${{ steps.eval-platforms.outputs.result }}
+          platforms: ${{ matrix.platform }}
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/gentoo-stage4
