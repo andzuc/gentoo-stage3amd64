@@ -38,6 +38,7 @@ jobs:
     strategy:
       matrix:
         platform: ${{ fromJson(needs.detect-platforms.outputs.platforms) }}
+      max-parallel: 1
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
