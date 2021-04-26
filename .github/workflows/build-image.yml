@@ -30,14 +30,14 @@ jobs:
             const platformList=manifestList.map(manifest=>manifest.Descriptor.platform)
             const platformStrList=platformList.map(platform=>(`${platform.os}/${platform.architecture}${(platform.variant!==null&&platform.variant!==undefined)?('/'+platform.variant):''}`))
             console.log(`And the manifest is: ${platformStrList}`)
-            return `${platformList}`
+            return `${platformStrList}`
   build-image:
     runs-on: ubuntu-latest
     timeout-minutes: 1200
     needs: detect-platforms
     strategy:
       matrix:
-        platform: ${{ needs.detect-platforms.outputs.platforms }}
+        platform: ${{ fromJson(needs.detect-platforms.outputs.platforms) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
