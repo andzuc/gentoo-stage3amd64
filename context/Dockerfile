@@ -8,7 +8,7 @@ FROM andzuc/gentoo-stage3:latest
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
 RUN emerge --sync \
-    && FEATURES="-sandbox -usersandbox -ipc-sandbox -mount-sandbox -network-sandbox -pid-sandbox" emerge -jvuDN @world \
+    && FEATURES="-sandbox -usersandbox -ipc-sandbox -mount-sandbox -network-sandbox -pid-sandbox" emerge -quDN @world \
     && emerge --depclean \
     && emerge --info \
     && (cd /var/db/pkg/ && ls -d */*)
